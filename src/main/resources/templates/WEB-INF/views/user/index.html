@@ -1,0 +1,38 @@
+
+<!DOCTYPE HTML>
+<html xmlns:th="http://thymeleaf.org">
+<head th:replace="user_fragments :: user_head">
+</head>
+<body>
+
+	<div class="fh5co-loader"></div>
+
+	<div id="page">
+		<nav th:replace="user_fragments :: user_nav"></nav>
+
+		<header id="fh5co-header" class="fh5co-cover" role="banner"
+			th:style="'background:url('+ @{/images/img_bg_1.jpg} +');'"
+			data-stellar-background-ratio="0.5">
+			<div class="overlay"></div>
+			<div class="container">
+				<div class="row">
+					<div class="col-md-8 col-md-offset-2 text-center">
+						<div class="display-t">
+							<div class="display-tc animate-box" data-animate-effect="fadeIn">
+								<h1>Hệ thống thi trắc nghiệm trực tuyến</h1>
+								<p>
+									<a class="btn btn-primary btn-lg btn-learn"
+									 href="/login">Đăng nhập</a>
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+
+	</div>
+<div th:replace = "user_fragments :: user_script"></div>
+</body>
+</html>
+

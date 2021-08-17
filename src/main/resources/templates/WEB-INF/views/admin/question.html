@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head th:replace="admin_fragments :: admin_head">
+</head>
+<body>
+	<div class="container-scroller">
+		<nav th:replace="admin_fragments :: admin_header"></nav>
+		<div class="container-fluid page-body-wrapper">
+			<nav th:replace="admin_fragments :: admin_sidebar"></nav>
+			<div class="main-panel">
+				<div class="content-wrapper">
+
+
+					<!-- begin::content -->
+					<div class="card-description"></div>
+					<div class="card">
+						<div class="card-body">
+							<div class="card-description">
+								<div style="display: inline-block;">
+									<button type="button" class="btn btn-primary openModal">Thêm
+										câu hỏi</button>
+								</div>
+							</div>
+							<input type="hidden" class="form-control" id="maxMark"
+								name="maxMark" th:value="${maxMark}"> <input
+								type="hidden" class="form-control" id="currentMark"
+								name="currentMark" th:value="${currentMark}">
+							<div class="table-responsive">
+								<table class="table table-hover" id="mytable">
+									<thead>
+										<tr>
+											<th>STT</th>
+											<th>Câu hỏi</th>
+											<th>Điểm</th>
+											<th>Tùy chọn</th>
+										</tr>
+									</thead>
+									<tbody>
+										<th:block th:if="${not #lists.isEmpty(questions)}">
+											<th:block th:each="quest,state : ${questions}">
+												<tr>
+													<td th:utext="${state.count}"></td>
+													<td th:utext="${quest.question}"></td>
+													<td th:utext="${quest.questMark}"></td>
+													<td>
+														<button th:data-id="${quest.quest_Id}" type="button"
+															class="btn btn-sm btn-secondary btnDetail">
+															<i class="ti-file btn-icon-append"></i>
+														</button>
+														<button th:data-id="${quest.quest_Id}" type="button"
+															class="btn btn-sm btn-warning deleteIcon">
+															<i class="ti-alert btn-icon-prepend"></i>
+														</button>
+													</td>
+												</tr>
+											</th:block>
+										</th:block>
+										<th:block th:if="${#lists.isEmpty(questions)}">
+											<tr>
+												<td colspan="4" style="text-align: center;">Chưa có câu
+													hỏi nào</td>
+											</tr>
+										</th:block>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+
+					<!-- end::content -->
+
+					<div class="modal fade" id="modalAddOrEdit" tabindex="-1"
+						role="dialog" aria-labelledby="exampleModalLabel"
+						aria-hidden="true">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="exampleModalLabel">Chi tiết
+										câu hỏi</h5>
+									<button type="button" class="close btnDelete"
+										aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="card">
+									<div class="card-body modal-body">
+										<div class="table-responsive">
+											<form action="#" method="post">
+												<div class="form-group">
+													<input type="hidden" class="form-control" id="examId"
+														name="examId" th:value="${id}">
+												</div>
+												<div class="form-group">
+													<input type="hidden" class="form-control" id="quest_Id"
+														name="quest_Id">
+												</div>
+												<div class="form-group">
+													<label for="fullName">Câu hỏi</label> <input type="text"
+														required="required" class="form-control" id="question"
+														name="question">
+												</div>
+												<div class="form-group">
+													<label for="username">Điểm</label> <input type="number"
+														required="required" min="1" max="5" class="form-control"
+														id="questMark" name="questMark" placeholder="1"> <span
+														id="errMsg">Điểm 1 câu chỉ từ 1 đến 5 điểm</span>
+												</div>
+												<div class="form-group">
+													<label for="password">Câu 1</label> <input type="text"
+														required="required" class="form-control" id="option1"
+														name="option1">
+												</div>
+												<div class="form-group">
+													<label for="password">Câu 2</label> <input type="text"
+														required="required" class="form-control" id="option2"
+														name="option2">
+												</div>
+												<div class="form-group">
+													<label for="password">Câu 3</label> <input type="text"
+														required="required" class="form-control" id="option3"
+														name="option3">
+												</div>
+												<div class="form-group">
+													<label for="password">Câu 4</label> <input type="text"
+														required="required" class="form-control" id="option4"
+														name="option4">
+												</div>
+												<div class="form-group">
+													<label for="email">Câu trả lời :</label> <input type="text"
+														required="required" class="form-control" id="answer"
+														name="answer">
+												</div>
+												<div class="form-group">
+													<input type="hidden" required="required"
+														class="form-control" id="examId" name="examId"
+														th:value="${examId}">
+												</div>
+												<button type="submit" class="btn btn-success btnAdd">Lưu</button>
+												<button type="reset" class="btn btn-secondary btnDelete">Xoá</button>
+
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div th:replace="admin_fragments :: admin_script"></div>
+	<script>
+		function clearInput(){
+			$("#quest_Id").val();
+			$("#question").val();
+			$("#questMark").val();
+			$("#option1").val();
+			$("#option2").val();
+			$("#option3").val();
+			$("#option4").val();
+			$("#answer").val();
+		}
+		
+		
+		$(document).ready(function() {
+			$("#errMsg").hide();
+			$("#questMark").on("keyup",function(){
+				if (Number($("#questMark").val()) < 1 || Number($("#questMark").val()) > 5) {
+					$("#errMsg").show();
+				}else{
+					console.log($("#questMark").val());
+					$("#errMsg").hide();
+				}
+			});
+			
+					$(document).on("click",".btnAdd",function(e) {
+						e.preventDefault();
+								var maxMark = $("#maxMark").val();
+								var currentMark = $("#currentMark").val();
+								var examId = $("#examId").val();
+								var quest_Id = $("#quest_Id").val();
+								var question = $("#question").val();
+								var questMark = $("#questMark").val();
+								var option1 = $("#option1").val();
+								var option2 = $("#option2").val();
+								var option3 = $("#option3").val();
+								var option4 = $("#option4").val();
+								var answer = $("#answer").val();
+								
+								if (Number(maxMark) > Number(currentMark)) {
+									if (answer == option1 ||
+											answer == option2 ||
+											answer == option3 ||
+											answer == option4) {
+												var data ={
+														quest_Id : quest_Id,
+														 question: question,
+														 questMark: questMark,
+														 option1: option1,
+														 option2: option2,
+														 option3: option3,
+														 option4: option4,
+														 answer : answer
+													};
+												
+												stringUrl = "http://localhost:8080/api/quest/addOrEdit/"+examId;
+												console.log(stringUrl);
+												$.ajax({
+													method :"POST",
+													url : stringUrl,
+													data :JSON.stringify(data),
+													headers :{
+														'Accept' : 'application/json',
+														'Content-Type' : 'application/json'
+													},success:function(res){
+														location.href=location.href;
+													}
+													
+												})
+											
+										}else{
+											alert("Câu trả lời chưa trùng với bất kì câu trả lời nào!");
+											$("#question").val(question);
+											$("#questMark").val(Number(questMark));
+											$("#option1").val(option1);
+											$("#option2").val(option2);
+											$("#option3").val(option3);
+											$("#option4").val(option4);
+											$("#answer").val(answer);
+											$("#modalAddOrEdit").modal('show');
+										}
+								}else{
+									alert("Quá số điểm của bài thi rồi!");
+									$("#question").val(question);
+									$("#questMark").val(Number(questMark));
+									$("#option1").val(option1);
+									$("#option2").val(option2);
+									$("#option3").val(option3);
+									$("#option4").val(option4);
+									$("#answer").val(answer);
+									$("#modalAddOrEdit").modal('show');
+								}
+							});
+					$(document).on("click",".openModal",function(){
+						isEdit = false;
+						$("#modalAddOrEdit").modal('show');
+					});
+					$(document).on("click",".btnDelete",function(){
+						clearInput()
+						});
+					
+					$(document).on("click",".btnDetail",function(){
+						var id = $(this).data("id");
+						stringUrl = "http://localhost:8080/api/quest/get/"+id;
+						
+						$.ajax({
+							method : "GET",
+							url : stringUrl,
+							success : function(res){
+								$("#quest_Id").val(res.quest_Id);
+								$("#question").val(res.question);
+								$("#questMark").val(Number(res.questMark));
+								$("#option1").val(res.option1);
+								$("#option2").val(res.option2);
+								$("#option3").val(res.option3);
+								$("#option4").val(res.option4);
+								$("#answer").val(res.answer);
+								$("#modalAddOrEdit").modal('show');
+							},error : function (err){
+								console.log(err);
+							}
+						})
+					});
+					
+					$(document).on("click",".deleteIcon" ,function(){
+						var result = confirm('Bạn có chắc muốn xóa câu hỏi này?');
+						if(result){
+							var id = $(this).data("id");
+							stringUrl = "http://localhost:8080/api/quest/delete/"+id;
+							
+							$.ajax({
+								method : "GET",
+								url : stringUrl,
+								success : function(res){
+									alert("Xóa thành công!");
+									location.href=location.href;
+								},error : function (err){
+									console.log(err);
+								}
+							})
+						}
+					});
+				});
+	</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="admin_fragments :: admin_head">
+
+</head>
+
+<body>
+	<div class="container-scroller">
+		<nav th:replace="admin_fragments :: admin_header"></nav>
+		<div class="container-fluid page-body-wrapper">
+			<nav th:replace="admin_fragments :: admin_sidebar"></nav>
+			<div class="main-panel">
+				<div class="content-wrapper">
+
+
+					<!-- begin::content -->
+
+					<div class="col-md-12 grid-margin transparent">
+						<div class="row">
+							<div class="col-md-6 mb-4 stretch-card transparent">
+								<div class="card card-tale">
+									<div class="card-body">
+										<p class="mb-4">Giáo viên</p>
+										<div class="fs-30 mb-2" th:text="${teachers}">
+										 <i class="icon icon-head"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6 mb-4 stretch-card transparent">
+								<div class="card card-dark-blue">
+									<div class="card-body">
+										<p class="mb-4">Học sinh</p>
+										<p class="fs-30 mb-2" th:text="${students}">
+										 <i class="icon icon-head"></i>
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- end::content -->
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<div th:replace="admin_fragments :: admin_script"></div>
+</body>
+
+</html>

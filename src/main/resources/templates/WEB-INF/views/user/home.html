@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Learn.</title>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+	crossorigin="anonymous">
+</head>
+<body>
+<th:block th:replace="user_fragments :: user_id"></th:block>
+	<div class="container">
+		<nav class="navbar navbar-expand-lg navbar-light bg-light">
+			<a class="navbar-brand" href="/">Learn.</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse"
+				data-target="#navbarSupportedContent"
+				aria-controls="navbarSupportedContent" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav mr-auto">
+				</ul>
+				<form class="form-inline my-2 my-lg-0">
+						<a class="dropdown-item" href="/logout">Đăng xuất</a>
+				</form>
+			</div>
+		</nav>
+		<div class="card-description"></div>
+		<div class="card">
+			<div class="card-body">
+				<div class="card-description">
+				<th:block th:if="${err!=null}">
+					<div class="alert alert-warning" role="alert" th:utext="${err}"></div>
+				</th:block>
+					<div style="display: inline-block;">
+						<select id="dropdownSubject"
+							class="custom-select custom-select-md mb-3 dropdownSubject">
+							<option value="all" selected>Chọn môn học</option>
+						</select>
+					</div>
+				</div>
+				<div class="table-responsive">
+					<table class="table table-hover" id="mytable">
+						<thead>
+							<tr>
+								<th >STT</th>
+								<th>Tên đề</th>
+								<th>Ngày hết hạn</th>
+								<th>Tùy chọn</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+<div th:replace="user_fragments :: user_script"></div>
+<script >
+	function loadExamBySubject(subName,stdId){
+		stringUrl = "http://localhost:8080/api/subs/fetch/" + subName+"/"+stdId;
+		console.log(stringUrl);
+		$.ajax({
+			method:"GET",
+			url : stringUrl,
+			success : function(res){
+				$("#mytable tbody").empty();
+				var row = '';
+				if (res.length > 0) {
+					$.each(res,function(idx,item){
+						var date = new Date(item.deadline);
+						row += "<tr><td>"
+							+(idx+1)+"</td><td>"
+							+item.examName+"</td><td>"
+							+date.getDate()+"-"+(date.getMonth()+1)+"-"+date.getFullYear()+"</td><td>"
+							+"<button data-id=\""+item.exam_Id+"\" type=\"button\" class=\"btn btn-md btn-success btnStart\">Làm bài</button>"+"</td></tr>";
+						
+					})
+					$("#mytable tbody").html(row);
+				}else{
+					$("#mytable tbody").html("<tr>"
+								+"<td colspan=\"4\" style=\"text-align: center;\">Chưa có đề nào</td></tr>");
+				}
+			}
+		})
+	};
+	
+	function loadSubject(){
+		url = "http://localhost:8080/api/subs/list";
+		$.ajax({
+			method:"GET",
+			url:url,
+			success : function(res){
+				$("#dropdownSubject").find("option").not(":first").remove();
+				$.each(res,function(idx,item){
+					if (item.enable) {
+						$("#dropdownSubject").append("<option value=\""+item.sub_Id+"\">"+item.subName+"</option>");
+					}
+				})
+			}
+		})
+	};
+
+	$(document).ready(function(){
+		loadSubject();
+		$("#dropdownSubject").change(function(){
+			var selectedSubject = $("#dropdownSubject").find(":selected").text();
+			var stdId= $("#stuId").val();
+			loadExamBySubject(selectedSubject,stdId);
+		});
+		
+		$(document).on("click",".btnStart",function(e){
+			var examId = $(this).data("id");
+			url ="http://localhost:8080/make_exam/"+examId;
+			console.log(url);
+			window.location.href = url;
+		});
+	});
+</script>
+</body>
+</html>

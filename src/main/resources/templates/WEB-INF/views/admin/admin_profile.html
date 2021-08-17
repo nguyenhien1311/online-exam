@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head th:replace="admin_fragments :: admin_head">
+</head>
+<body>
+
+	<div class="container-scroller">
+		<nav th:replace="admin_fragments :: admin_header"></nav>
+		<div class="container-fluid page-body-wrapper">
+			<nav th:replace="admin_fragments :: admin_sidebar"></nav>
+			<div class="main-panel">
+				<div class="content-wrapper">
+
+
+					<!-- begin::content -->
+
+					<div class="card">
+						<div class="card-body">
+							<h4 class="card-title">Thông tin tài khoản</h4>
+							<div style="color:green" th:text="${suc}"></div>
+							<div style="color:red" th:text="${err}"></div>
+							<div class="table-responsive">
+								<form action="#" class="forms-sample"
+									th:action="@{/admin/update_profile/{id}(id=${user.u_Id})}"
+									th:object="${user}" method="post">
+									<div class="form-group"><input type="hidden"
+											class="form-control" id="u_Id" name="u_Id" th:field="*{u_Id}" required="required">
+									</div>
+									<div class="form-group">
+										<label for="exampleInputUsername1">Họ và tên</label> <input
+											type="text" class="form-control" id="fullName"
+											name="fullName" th:field="*{fullName}" required="required">
+									</div>
+									<div class="form-group">
+										<label for="username">Tài khoản :</label> <input type="text"
+											class="form-control" id="username" name="username"
+											th:field="*{username}" required="required">
+									</div>
+									<div class="form-group">
+										<label for="password">Mật khẩu :</label> <input
+											type="password" class="form-control" id="password"
+											name="password" th:field="*{password}"
+											placeholder="Để dòng này rỗng nếu không muốn đổi mật khẩu">
+									</div>
+
+									<div class="form-group">
+										<label for="email">Địa chỉ email :</label> <input type="email"
+											class="form-control" id="email" name="email"
+											th:field="*{email}" required="required">
+									</div>
+									<div class="form-group"><input type="hidden"
+											class="form-control" id="role" name="role" th:field="*{role}" required="required"
+											>
+									</div>
+									<div class="form-group"> <input type="hidden"
+											class="form-control" id="enable" name="enable"
+											th:field="*{enable}" required="required">
+									</div>
+									<button type="submit" class="btn btn-primary mr-2">Cập
+										nhật</button>
+								</form>
+							</div>
+						</div>
+					</div>
+
+					<!-- end::content -->
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div th:replace="admin_fragments :: admin_script"></div>
+</body>
+</html>

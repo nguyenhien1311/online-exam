@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymleaf.org">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Learn</title>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+	crossorigin="anonymous">
+<script
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"
+	type="text/javascript"></script>
+</head>
+<body>
+	<div class="container">
+		<form th:action="@{/api/user/export}" th:object="${txtEmail}" method="get">
+			<table class="table">
+				<tr>
+					<td>Email : <input name="txtEmail" type="email" id="txtEmail"
+						class="TextShort" required />
+						&nbsp; 
+						<input type="button" name="btnTracuu" value="Tra cứu" id="btnTracuu" /> 
+						&nbsp; 
+						<input type="submit"  style="background-color: #73fa96;"
+						value="In ra Excel" id="btnExport" />
+					</td>
+				</tr>
+			</table>
+		</form>
+		<table class="table table-bordered tblResult">
+			<thead>
+				<tr>
+					<th scope="col">Môn học</th>
+					<th scope="col">Bài thi</th>
+					<th scope="col">Điểm thi</th>
+					<th scope="col">Điểm tối đa</th>
+					<th scope="col">Nhận xét</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+	<script>
+		function loadPaper(email) {
+			stringUrl = "http://localhost:8080/api/user/search/" + email;
+			$.ajax({
+				method : "GET",
+				url : stringUrl
+			}).done(
+					function(res) {
+						console.log(res);
+						var rows = '';
+						$.each(res, function(idx, item) {
+							var txtPass = item.passed ? "Đạt" : "Không đạt"
+							rows += "<tr><td>" + item.subName + "</td><td>"
+									+ item.examName + "</td><td>"
+									+ item.earnedMark + "</td><td>"
+									+ item.totalMarks + "</td><td>" + txtPass
+									+ "</td></tr>";
+						})
+						$(".tblResult tbody").html(rows);
+					})
+		}
+		$(document).ready(function() {
+			$("#btnExport").hide();
+			$("#btnTracuu").click(function(e) {
+				e.preventDefault();
+				email = $('#txtEmail').val();
+				if (email != null && email.length > 0) {
+					$("#btnExport").show();
+					console.log(email);
+					loadPaper(email);
+				} else {
+					alert("Nhập email học sinh để tìm kiếm!");
+				}
+			});
+		});
+	</script>
+</body>
+</html>

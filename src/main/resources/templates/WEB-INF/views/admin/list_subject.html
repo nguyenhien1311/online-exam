@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymleaf.org">
+<head th:replace="admin_fragments :: admin_head">
+</head>
+<body>
+	<div class="container-scroller">
+		<nav th:replace="admin_fragments :: admin_header"></nav>
+		<div class="container-fluid page-body-wrapper">
+			<nav th:replace="admin_fragments :: admin_sidebar"></nav>
+			<div class="main-panel">
+				<div class="content-wrapper">
+
+
+					<!-- begin::content -->
+
+
+
+					<div class="card">
+						<div class="card-body">
+							<h4 class="card-title">Danh sách môn học</h4>
+							<button type="button" class="btn btn-primary" data-toggle="modal"
+								data-target="#modalAddOrEdit">Thêm mới</button>
+														<div class="card-description" style="margin-top: 20px;">
+							<form th:action="@{|${baseUrl}${current}|}" >
+								<div class="nav-item nav-search d-none d-lg-block row">
+									<div class="input-group">
+											<div class="input-group-prepend hover-cursor"
+											id="navbar-search-icon">
+											<span class="input-group-text" id="search"> <i
+												class="icon-search"></i>
+											</span>
+										</div>
+										<input type="text" class="form-control txtSearch" name="keyword" th:value="${keyword}"
+											id="navbar-search-input" placeholder="Tìm kiếm"
+											aria-label="search" aria-describedby="search">
+											&nbsp;
+										<button type="submit" class="form-control btn-primary" 
+											 value="" >Tìm</button>
+											 &nbsp;
+										<button type="reset" class="form-control btn-warning" 
+											 value="" >Xóa</button>
+									</div>
+								</div>
+								</form>
+							</div>
+							<div class="table-responsive">
+								<table class="table table-hover" id="mytable">
+									<thead>
+										<tr>
+											<th>Mã</th>
+											<th>Môn học</th>
+											<th>Trạng thái</th>
+											<th>Tùy chọn</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="s,sState:${list.pageList}">
+											<td th:text="${sState.count}"></td>
+											<td th:text="${s.subName}"></td>
+											<td th:text="${s.enable?'Hoạt động':'Khóa'}"></td>
+											<td>
+												<button type="button"
+													class="btn btn-sm btn-secondary editDilog"
+													th:attr="data-id=${s.sub_Id}" data-toggle="modal"
+													data-target="#modalAddOrEdit">
+													<i class="ti-pencil-alt btn-icon-append"></i>
+												</button>
+												<button type="button" th:attr="data-id=${s.sub_Id}"
+													class="btn btn-sm btn-warning deleteIcon">
+													<i class="ti-reload btn-icon-prepend"></i>
+												</button>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<p >Hiển thị 
+									<b>
+										<th:block th:if="${maxSize >= 10}" th:utext="${pageSize}">
+										</th:block>
+										<th:block th:if="${maxSize <= 10}" th:utext="${maxSize}">
+										</th:block>
+									</b> 
+									/
+									<b>
+										<th:block th:utext="${maxSize}">
+										</th:block>
+								</b> phần tử</p>
+								<ul class="pagination">
+									<li th:class="${current == 1}?'page-item disabled':'page-item'">
+										<a class="page-link" th:href="@{/admin/list/student/1}">Trang
+											đầu</a>
+									</li>
+									<li
+										th:class="${current == 1}?'page-item disabledd':'page-item'">
+										<a class="page-link" aria-label="Previous"
+										th:href="@{|${baseUrl}${current -1}|}"
+										title='Go to previous page'><span aria-hidden="true">&laquo;</span>
+											<span class="sr-only">Previous</span></a>
+									</li>
+									<th:block th:if="${totalPageCount <=10}">
+										<li th:each="item : ${#numbers.sequence(begin,end)}"
+											th:class="${item == current}?'page-item active':'page-item'">
+											<a class="page-link" th:href="@{|${baseUrl}${item}|}"><span
+												th:text="${item}">[[${item}]]</span></a>
+										</li>
+									</th:block>
+									<th:block th:if="${totalPageCount >10}">
+										<th:block
+											th:if="${current <= 5 || current > totalPageCount -4}">
+											<li th:each="item : ${#numbers.sequence(1,5)}"
+												th:class="${item == current}?'page-item active':'page-item'">
+												<a class="page-link" th:href="@{|${baseUrl}${item}|}"><span
+													th:text="${item}">[[${item}]]</span></a>
+											</li>
+											<a class="page-link" th:href="@{${baseUrl}+6}">...</a>
+											<li
+												th:each="item : ${#numbers.sequence(totalPageCount-4,totalPageCount)}"
+												th:class="${item == current}?'page-item active':'page-item'">
+												<a class="page-link" th:href="@{|${baseUrl}${item}|}"><span
+													th:text="${item}">[[${item}]]</span></a>
+											</li>
+										</th:block>
+										<th:block
+											th:if="${current >5  && current < totalPageCount -4}">
+											<a class="page-link" th:href="@{|${baseUrl}${current+4}|"><span
+												th:text="${item}">...</span></a>
+											<li
+												th:each="item : ${#numbers.sequence(current-4,current+4)}"
+												th:class="${item == current}?'page-item active':'page-item'">
+												<a class="page-link" th:href="@{|${baseUrl}${item}|}"><span
+													th:text="${item}">[[${item}]]</span></a>
+											</li>
+											<a class="page-link" th:href="@{|${baseUrl}${current-4}|}"><span
+												th:text="${item}">...</span></a>
+										</th:block>
+									</th:block>
+									<li
+										th:class="${current == totalPageCount}?'page-item disabled':'page-item'">
+										<a class="page-link" aria-label="Next"
+										th:href="@{|${baseUrl}${current +1}|}" title='Go to next page'><span
+											aria-hidden="true">&raquo;</span> <span class="sr-only">Next</span></a>
+									</li>
+									<li
+										th:class="${current == totalPageCount}?'page-item disabled':'page-item'">
+										<a class="page-link"
+										th:href="@{|${baseUrl}${totalPageCount}|}">Trang cuối</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+
+					<!-- end::content -->
+
+					<div class="modal fade" id="modalAddOrEdit" tabindex="-1"
+						role="dialog" aria-labelledby="exampleModalLabel"
+						aria-hidden="true">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="exampleModalLabel">Thông tin
+										môn học</h5>
+									<button type="button" class="close btnDelete"
+										data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="card">
+									<div class="card-body modal-body">
+										<div class="table-responsive">
+											<form action="#" method="post">
+												<div class="form-group">
+													<input type="hidden" class="form-control" id="sub_Id"
+														name="sub_Id">
+												</div>
+												<div class="form-group">
+													<label for="fullName">Tên môn học</label> <input
+														type="text" class="form-control" id="subName"
+														name="subName" required> 
+												</div>
+												<div class="form-group">
+													<input type="hidden" class="form-control" id="enable"
+														name="enable">
+												</div>
+
+
+												<button type="submit" class="btn btn-success btnAdd">Lưu</button>
+												<button type="reset" class="btn btn-secondary btnDelete">Xoá</button>
+
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div th:replace="admin_fragments :: admin_script"></div>
+	<script>
+		var isEdit = false;
+
+		function clearInput() {
+			$(".btnDelete").on("click", function() {
+				$("#sub_Id").val("");
+				$("#subName").val("");
+				if (isEdit) {
+					isEdit = !isEdit;
+				}
+				console.log(isEdit);
+			});
+		}
+
+		function addOrUpdate(isEdit) {
+			host = "http://localhost:8080/api/subs/";
+
+			if (!isEdit) {
+				host += "add";
+				var data = {
+					subName : $("#subName").val()
+				};
+				$.ajax({
+					method : "POST",
+					url : host,
+					data : JSON.stringify(data),
+					headers : {
+						'Accept' : 'application/json',
+						'Content-Type' : 'application/json'
+					},success: function(respone) {
+						alert("Lưu thành công");
+						location.href = location.href;
+					},error :function() {
+						console.log(data);
+						alert("Lưu thất bại (Môn đã tồn tại)");
+					} 
+				})
+			} else {
+				host += "edit";
+				var data = {
+					sub_Id : $("#sub_Id").val(),
+					subName : $("#subName").val()
+				};
+				$.ajax({
+					method : "POST",
+					url : host,
+					data : JSON.stringify(data),
+					headers : {
+						'Accept' : 'application/json',
+						'Content-Type' : 'application/json'
+					},success: function(respone) {
+						alert("Lưu thành công");
+						location.href = location.href;
+					},error :function() {
+						console.log(data);
+						alert("Lưu thất bại");
+					} 
+				})
+			}
+		}
+
+		function findSubject(id) {
+			$.ajax({
+				method : "GET",
+				url : "http://localhost:8080/api/subs/get/" + id,
+				success : function(respone) {
+					console.log(respone);
+					$("#sub_Id").val(respone.sub_Id), $("#subName").val(
+							respone.subName)
+					isEdit = true;
+				}
+			})
+		};
+		function deleteSubject(id) {
+			$.ajax({
+				method : "GET",
+				url : "http://localhost:8080/api/subs/delete/" + id,
+				success : function(respone) {
+					alert("Đã chỉnh sửa!");
+					location.href = location.href;
+				},
+				error : function(err) {
+					alert("Lỗi đâu đó rồi!");
+				}
+			})
+		};
+
+		$(document).ready(function() {
+			clearInput();
+
+			$(document).on("click", ".editDilog", function() {
+
+				var id = $(this).data("id");
+				findSubject(id);
+			})
+
+			$("#modalAddOrEdit").submit(function(e) {
+				e.preventDefault();
+				addOrUpdate(isEdit);
+			})
+			$(document).on("click", ".deleteIcon", function() {
+				var result = confirm("Bạn có chắc dừng môn học này?");
+				if (result) {
+					var id = $(this).data("id");
+					deleteSubject(id);
+				}
+			})
+		});
+	</script>
+</body>
+</html>

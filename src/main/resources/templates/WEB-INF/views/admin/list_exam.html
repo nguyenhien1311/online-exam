@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymleaf.org">
+<head th:replace="admin_fragments :: admin_head">
+</head>
+<body>
+
+	<div class="container-scroller">
+		<nav th:replace="admin_fragments :: admin_header"></nav>
+		<div class="container-fluid page-body-wrapper">
+			<nav th:replace="admin_fragments :: admin_sidebar"></nav>
+			<div class="main-panel">
+				<div class="content-wrapper">
+
+
+					<!-- begin::content -->
+					<div class="card-description"></div>
+					<div class="card">
+						<div class="card-body">
+							<div class="card-description">
+								<div style="display: inline-block;">
+									<h5>Môn học</h5>
+									<select id="dropdownSubject"
+										class="custom-select custom-select-md mb-3 dropdownSubject">
+										<option value="all" selected>Chọn môn học để xem đề</option>
+									</select>
+									<button type="button" class="btn btn-primary"
+										onclick="checkSubject()">Thêm đề</button>
+								</div>
+							</div>
+							<div class="table-responsive">
+								<table class="table table-hover" id="mytable">
+									<thead>
+										<tr>
+											<th>STT</th>
+											<th>Tên đề</th>
+											<th>Ngày hết hạn</th>
+											<th>Trạng thái</th>
+											<th>Tùy chọn</th>
+										</tr>
+									</thead>
+									<tbody>
+
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+
+					<!-- end::content -->
+
+					<div class="modal fade" id="modalAddExam" tabindex="-1"
+						role="dialog" aria-labelledby="exampleModalLabel"
+						aria-hidden="true">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="exampleModalLabel">Thêm đề thi</h5>
+									<button type="button" class="close btnDelete"
+										data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="card">
+									<div class="card-body modal-body">
+										<div class="table-responsive">
+											<form action="#" method="post">
+												<div class="form-group">
+													<input type="hidden" class="form-control" id="sub_Id"
+														name="sub_Id">
+												</div>
+												<div class="form-group">
+													<input type="hidden" class="form-control" id="exam_Id"
+														name="exam_Id">
+												</div>
+												<div class="form-group">
+													<label for="fullName">Tên đề</label> <input type="text"
+														class="form-control" id=examName name="examName"
+														required="required" placeholder="Bài điều kiện 1">
+												</div>
+												<div class="form-group">
+													<label for="fullName">Tổng điểm</label> <input
+														type="number" class="form-control" id=totalMarks
+														name="totalMarks" min="10" max="20" required="required" placeholder="10">
+												</div>
+												<div class="form-group">
+													<label for="fullName">Điểm qua</label> <input type="number"
+														class="form-control" id=passMarks name="passMarks"
+														required="required" min="1" max="7" placeholder="5">
+												</div>
+												<div class="form-group">
+													<label for="fullName">Hạn làm bài</label> <input
+														type="date" class="form-control" id="deadline"
+														name="deadline" required="required">
+												</div>
+												<button type="submit" class="btn btn-success">Lưu</button>
+												<button type="reset" class="btn btn-secondary btnDelete">Xoá</button>
+
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div th:replace="admin_fragments :: admin_script"></div>
+	<script>
+		function clearInput() {
+			$(".btnDelete").on("click", function() {
+				$("#sub_Id").val("");
+				$("#examName").val("");
+				$("#totalMarks").val("");
+				$("#passMarks").val("");
+				$("#deadline").val("");
+			});
+		}
+
+		function getDropdownValue() {
+			$("#dropdownSubject").change(
+					function() {
+						var selectedSubject = $("#dropdownSubject").find(
+								":selected").text();
+						loadExamBySubject(selectedSubject);
+					});
+		}
+
+		function checkSubject() {
+			var subjectId = $("#dropdownSubject").find(":selected").val();
+			if (subjectId == "all") {
+				
+				alert("Chưa chọn môn!");
+			} else {
+				$("#sub_Id").val(subjectId);
+				$("#modalAddExam").modal('show');
+			}
+		}
+
+		function loadExamBySubject(subName) {
+			stringUrl = "http://localhost:8080/api/subs/fetch/" + subName;
+			$.ajax({method : "GET",
+						url : stringUrl,
+						success : function(respone) {
+							$("#mytable tbody").empty();
+							var row = '';
+							if (respone.length > 0) {
+								$.each(respone,function(idx, item) {
+													var date = new Date(item.deadline);
+													var enableText = item.enable ? "Còn hạn": "Hết hạn";
+													var status = item.e_status ? "": "-Hủy";
+													row += ("<tr><td>"
+															+ (idx+1)
+															+ "</td><td>"
+															+ item.examName
+															+ "</td><td>"
+															+ date.getDate()
+															+ "/"
+															+ (date.getMonth() + 1)
+															+ "/"
+															+ date.getFullYear()
+															+ "</td><td>"
+															+ enableText + status
+															+ "</td><td>"
+															+ "<button data-id=\""+item.exam_Id+"\" type=\"button\" class=\"btn btn-sm btn-secondary btnShowQuestion\"><i class=\"ti-pencil-alt btn-icon-append\"></i></button>"
+															+ "<button data-id=\""+item.exam_Id+"\" type=\"button\" class=\"btn btn-sm btn-success btnDetail\"><i class=\"ti-write btn-icon-append\"></i></button>"
+															+ "<button data-id=\""+item.exam_Id+"\" type=\"button\" class=\"btn btn-sm btn-warning deleteIcon\" ><i class=\"ti-trash btn-icon-prepend\"></i></button></td></tr>");
+												});
+								$("#mytable tbody").html(row);
+							} else {
+								$("#mytable tbody").html('<tr><td colspan="6" style="text-align: center;vertical-align: middle;">Môn này chưa có đề nào</td></tr>');
+							}
+						}
+
+					});
+		}
+
+
+		function loadSubject() {
+			stringUrl = "http://localhost:8080/api/subs/list";
+			$
+					.ajax({
+						method : "GET",
+						url : stringUrl,
+						success : function(respone) {
+							$('#dropdownSubject').find('option').not(':first')
+									.remove();
+							$.each(respone, function(idx, item) {
+								if (item.enable)
+									$("#dropdownSubject").append(
+											"<option value="+item.sub_Id+">"
+													+ item.subName
+													+ "</option>");
+							})
+						}
+					})
+
+		}
+		
+		
+		function convert(deadline) {
+			  var deadline = new Date(deadline),
+			    mnth = ("0" + (deadline.getMonth() + 1)).slice(-2),
+			    day = ("0" + deadline.getDate()).slice(-2);
+			  return [deadline.getFullYear(), mnth, day].join("-");
+			}
+		
+		$(document).ready(function() {
+			getDropdownValue();
+			loadSubject();
+			var subname = $('#dropdownSubject').find('option:first').text();
+
+			$("#modalAddExam").submit(function(e) {
+				e.preventDefault();
+				var sub_Id = $("#sub_Id").val();
+				var exam_Id = $("#exam_Id").val();
+				var examName = $("#examName").val();
+				var totalMarks = $("#totalMarks").val();
+				var passMarks = $("#passMarks").val();
+				var deadline = $("#deadline").val();
+				console.log(sub_Id);
+				if (Number(totalMarks) <= Number(passMarks)) {
+					if (confirm("Điểm qua môn phải bé hơn tổng điểm")) {
+						$("#sub_Id").val(sub_Id);
+						$("#exam_Id").val(exam_Id);
+						$("#examName").val(examName);
+						$("#totalMarks").val(Number(totalMarks));
+						$("#passMarks").val(Number(passMarks));
+						$("#deadline").val(deadline);
+						$("#modalAddExam").modal('show');
+					}
+				}
+				var dd = new Date(deadline);
+				var today = new Date();
+				if (dd.setHours(0, 0, 0, 0) <= today.setHours(0, 0, 0, 0)) {
+					if (alert("Hạn làm bài phải lớn hơn ngày hiên tại")) {
+						$("#sub_Id").val(sub_Id);
+						$("#exam_Id").val(exam_Id);
+						$("#examName").val(examName);
+						$("#totalMarks").val(Number(totalMarks));
+						$("#passMarks").val(Number(passMarks));
+						$("#deadline").val(deadline);
+						$("#modalAddExam").modal('show');
+					}
+					
+				}
+				if(Number(totalMarks) > Number(passMarks) && dd.setHours(0, 0, 0, 0) > today.setHours(0, 0, 0, 0)){
+					var data = {
+						exam_Id :$("#exam_Id").val(),
+						examName : $("#examName").val(),
+						totalMarks : $("#totalMarks").val(),
+						passMarks : $("#passMarks").val(),
+						deadline : $("#deadline").val()
+					};
+					console.log(sub_Id);
+					$.ajax({
+						method : "POST",
+						url : "http://localhost:8080/api/exam/add/" + sub_Id,
+						data : JSON.stringify(data),
+						headers : {
+							'Accept' : 'application/json',
+							'Content-Type' : 'application/json'
+						},success : function(respone) {
+							alert("Lưu thành công");
+							location.href = location.href;
+						},error : function() {
+							alert("Lưu thất bại");
+						}
+					});
+				}else{
+					alert("Sai thông tin");
+				}
+			});
+			$(document).on("click",".btnShowQuestion",function(){
+				var id = $(this).data("id");
+				url = "http://localhost:8080/admin/questions/" + id;
+				window.location.replace(url);
+			});
+			$(document).on("click",".deleteIcon",function(){
+				var id = $(this).data("id");
+				url = "http://localhost:8080/api/exam/delete/" + id;
+				$.ajax({
+					method : "GET",
+					url : url,
+					success : function(res){
+						alert("Đã hủy đề!");
+						var selectedSubject = $("#dropdownSubject").find(
+						":selected").text();
+						loadExamBySubject(selectedSubject);
+					}
+				})
+			});
+			$(document).on("click",".btnDetail",function(){
+				var id = $(this).data("id");
+				url = "http://localhost:8080/api/exam/get/" + id;
+				console.log(url);
+				$.ajax({
+					method : "GET",
+					url : url,
+					success : function(res){
+						var deadline = new Date(res.deadline);
+						var subjectId = $("#dropdownSubject").find(":selected").val();
+						$("#sub_Id").val(subjectId);
+						$("#examName").val(res.examName);
+						$("#exam_Id").val(res.exam_Id);
+						$("#totalMarks").val(Number(res.totalMarks));
+						$("#passMarks").val(Number(res.passMarks));
+						$("#deadline").val(convert(deadline));
+						$("#modalAddExam").modal('show');
+					}
+				})
+			});
+		});
+	</script>
+</body>
+</html>

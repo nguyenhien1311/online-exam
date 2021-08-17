@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Skydash Admin</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet"th:href="@{/vendors/feather/feather.css}">
+  <link rel="stylesheet"th:href="@{/vendors/ti-icons/css/themify-icons.css}">
+  <link rel="stylesheet"th:href="@{/vendors/css/vendor.bundle.base.css}">
+  <link rel="stylesheet"th:href="@{/css/vertical-layout-light/style.css}">
+  <link rel="shortcut icon"th:href="@{/images/favicon.png}" />
+</head>
+
+<body>
+  <div class="container-scroller">
+    <div class="container-fluid page-body-wrapper full-page-wrapper">
+      <div class="content-wrapper d-flex align-items-center auth px-0">
+        <div class="row w-100 mx-0">
+          <div class="col-lg-4 mx-auto">
+            <div class="auth-form-light text-left py-5 px-4 px-sm-5">
+              <div class="brand-logo">
+                <img th:src="@{/images/logo.svg}" alt="logo">
+              </div>
+              <h4>Hello! let's get started</h4>
+              <h6 class="font-weight-light">Sign in to continue.</h6>
+              <h6 class="font-weight-light" style="color:red;" th:text="${err}"></h6>
+              <form class="pt-3" method="post" th:action="@{/admin/loginProcessing}">
+                <div class="form-group">
+                  <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="Username" required="required">
+                </div>
+                <div class="form-group">
+                  <input type="password" class="form-control form-control-lg" id="password" name="password" placeholder="Password" required="required">
+                </div>
+                <div class="mt-3">
+                  <button class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" type="submit">SIGN IN</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- content-wrapper ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <script th:src="@{/vendors/js/vendor.bundle.base.js}"></script>
+  <script th:src="@{/js/off-canvas.js}"></script>
+  <script th:src="@{/js/hoverable-collapse.js}"></script>
+  <script th:src="@{/js/template.js}"></script>
+  <script th:src="@{/js/settings.js}"></script>
+  <script th:src="@{/js/todolist.js}"></script>
+</body>
+
+</html>
