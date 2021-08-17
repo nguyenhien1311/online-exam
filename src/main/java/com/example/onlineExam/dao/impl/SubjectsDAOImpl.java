@@ -119,10 +119,9 @@ public class SubjectsDAOImpl implements SubjectsDAO{
 	public Subjects findByName(String name) {
 		Session session = sessionFactory.openSession();
 		try {
-			name="%"+name+"%";
 			session.beginTransaction();
-			Subjects sub = (Subjects) session.createQuery("FROM Subjects WHERE subName = :name")
-					.setParameter("name", name)
+			Subjects sub = (Subjects) session.createQuery("FROM Subjects WHERE subName LIKE :name")
+					.setParameter("name", "%"+name+"%")
 					.uniqueResult();
 			session.getTransaction().commit();
 			return sub;
@@ -145,7 +144,7 @@ public class SubjectsDAOImpl implements SubjectsDAO{
 			List list = session.createQuery("FROM Subjects WHERE subName like :subName")
 					.setParameter("subName", "%"+name+"%")
 					.list();
-			session.getTransaction().rollback();
+			session.getTransaction().commit();
 			return list;
 		}catch (Exception e) {
 			// TODO: handle exception
