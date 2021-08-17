@@ -71,10 +71,12 @@
 													data-toggle="modal" data-target="#modalAddOrEdit">
 													<i class="ti-pencil-alt btn-icon-append"></i>
 												</button>
-												<button type="button" th:attr="data-id=${u.u_Id}"
-													class="btn btn-sm btn-warning deleteIcon">
-													<i class="ti-reload btn-icon-prepend"></i>
-												</button>
+												<th:block th:if="${u.username != session.user.username}">
+													<button type="button" th:attr="data-id=${u.u_Id}"
+														class="btn btn-sm btn-warning deleteIcon">
+														<i class="ti-reload btn-icon-prepend"></i>
+													</button>
+												</th:block>
 											</td>
 										</tr>
 									</tbody>

@@ -114,7 +114,7 @@ public class QuestionAPIController {
 			for (Questions q : lstQ) {
 				Questions byId = repo.getById(q.getQuest_Id());
 				if (byId != null) {
-					if (q.getAnswer().equals(byId.getAnswer())) {
+					if (byId.getAnswer().equals(q.getAnswer())) {
 						totalMark += byId.getQuestMark();
 					}
 				}

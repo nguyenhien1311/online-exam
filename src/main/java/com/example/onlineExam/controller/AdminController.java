@@ -176,7 +176,6 @@ private SubjectsDAO subjectsDAO;
 			data = new ArrayList<>(usersDAO.getByRole(role));
 		}
 		Users users = (Users) request.getSession().getAttribute("user");
-		data.remove(users);
 		PagedListHolder<?> pages = (PagedListHolder<?>) request.getSession().getAttribute("listUsers");
 		if (pages == null) {
 			pages = new PagedListHolder<>(data);
@@ -188,6 +187,7 @@ private SubjectsDAO subjectsDAO;
 					pages.setPage(goToPage);
 				}
 			}
+			data.remove(users);
 			model.addAttribute("keyword", keyword);
 			pages = new PagedListHolder<>(data);
 			pages.setPageSize(pageSize);

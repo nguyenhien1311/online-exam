@@ -111,14 +111,14 @@ public class SubjectAPIController {
 							List<Papers> listPapers = new ArrayList<>(exams.getListPapers());
 							for (Papers pp : listPapers) {
 								if (pp.getUser().getU_Id() != id) {
-									if (exams.isEnable()) {
+									if (!exams.isEnable()) {
 										toRemove.add(exams);
 									}
 								} else {
 									toRemove.add(exams);
 								}
 							}
-						}else {
+						} else {
 							toRemove.add(exams);
 						}
 					}
@@ -152,7 +152,7 @@ public class SubjectAPIController {
 		Subjects getById = repo.getById(sub.getSub_Id());
 		if (getById != null) {
 			sub.setEnable(getById.isEnable());
-			
+
 			boolean b = repo.updateEntity(sub);
 			if (b) {
 				return new ResponseEntity(HttpStatus.OK);

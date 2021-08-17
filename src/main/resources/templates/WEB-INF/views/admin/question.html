@@ -85,7 +85,7 @@
 								<div class="card">
 									<div class="card-body modal-body">
 										<div class="table-responsive">
-											<form action="#" method="post">
+											<form method="post">
 												<div class="form-group">
 													<input type="hidden" class="form-control" id="examId"
 														name="examId" th:value="${id}">
@@ -175,7 +175,7 @@
 				}
 			});
 			
-					$(document).on("click",".btnAdd",function(e) {
+			$("#modalAddOrEdit").submit(function(e) {
 						e.preventDefault();
 								var maxMark = $("#maxMark").val();
 								var currentMark = $("#currentMark").val();
